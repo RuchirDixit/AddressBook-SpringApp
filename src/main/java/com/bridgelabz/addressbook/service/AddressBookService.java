@@ -13,39 +13,39 @@ import com.bridgelabz.addressbook.model.AddressBookData;
 public class AddressBookService implements IAddressBookService {
 
 	public static final Logger logger = LoggerFactory.getLogger(AddressBookService.class);
+	List<AddressBookData> addressDatas = new ArrayList<AddressBookData>();
 	AtomicInteger id = new AtomicInteger(0);
 	
 	@Override
 	public List<AddressBookData> getAddressBookData() {
-		List<AddressBookData> employeePayrollDatas = new ArrayList<AddressBookData>();
-		employeePayrollDatas.add(new AddressBookData(id.incrementAndGet(), new AddressBookDTO("Harvey", "Manhattan")));
-		return employeePayrollDatas;
+		return addressDatas;
 	}
 
 	@Override
-	public AddressBookData getAddressBookDataById(long eid) {
-		AddressBookData addressData = null;
-		addressData = new AddressBookData(id.incrementAndGet(), new AddressBookDTO("Mike Ross", "NYC"));
-		return addressData;
+	public AddressBookData getAddressBookDataById(int eid) {
+		return addressDatas.get(eid-1);
 	}
 
 	@Override
 	public AddressBookData addAddressBook(AddressBookDTO dto) {
 		AddressBookData addressData = null;
 		addressData = new AddressBookData(id.incrementAndGet(), dto);
+		addressDatas.add(addressData);
 		return addressData;
 	}
 
 	@Override
-	public AddressBookData updateAddressBook(AddressBookDTO dto) {
-		AddressBookData addressData = null;
-		addressData = new AddressBookData(id.incrementAndGet(), dto);
+	public AddressBookData updateAddressBook(int addressId,AddressBookDTO dto) {
+		AddressBookData addressData = getAddressBookDataById(addressId);
+		addressData.setName(dto.getName());
+		addressData.setAddress(dto.getAddress());
+		addressDatas.set(addressId-1, addressData);
 		return addressData;
 	}
 
 	@Override
 	public void deleteAddressBook(long id) {
-		logger.debug("Inside service delete");
+		addressDatas.remove(id);
 		
 	}
 
