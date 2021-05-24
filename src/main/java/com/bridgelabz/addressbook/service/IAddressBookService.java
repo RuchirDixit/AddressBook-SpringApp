@@ -13,6 +13,6 @@ public interface IAddressBookService {
 	AddressBookData addAddressBook(AddressBookDTO dto);
 	
 	AddressBookData updateAddressBook(int addressId,AddressBookDTO dto);
-	
-	void deleteAddressBook(long id);
+
+	void deleteAddressBook(int id);
 }
