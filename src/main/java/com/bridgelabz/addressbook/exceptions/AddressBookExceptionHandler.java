@@ -3,6 +3,8 @@ package com.bridgelabz.addressbook.exceptions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.UnexpectedTypeException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -23,6 +25,11 @@ public class AddressBookExceptionHandler {
 		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
 	}
 	
+	@ExceptionHandler(UnexpectedTypeException.class)
+	public ResponseEntity<ResponseDTO> handleUnexpectedTypeException(UnexpectedTypeException exception){
+		ResponseDTO responseDTO = new ResponseDTO("Unexpected Type passed",exception.getMessage());
+		return new ResponseEntity<ResponseDTO>(responseDTO,HttpStatus.BAD_REQUEST);
+	}
 	@ExceptionHandler(AddressBookException.class)
 	public ResponseEntity<ResponseDTO> handleAddressBookException(AddressBookException exception){
 		ResponseDTO responseDTO = new ResponseDTO("Invalid Data", exception.getMessage());

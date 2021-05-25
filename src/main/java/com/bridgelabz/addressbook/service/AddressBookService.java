@@ -1,61 +1,53 @@
 package com.bridgelabz.addressbook.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bridgelabz.addressbook.dto.AddressBookDTO;
 import com.bridgelabz.addressbook.exceptions.AddressBookException;
 import com.bridgelabz.addressbook.model.AddressBookData;
-
+import com.bridgelabz.addressbook.repository.AddressBookRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class AddressBookService implements IAddressBookService {
 
-	List<AddressBookData> addressDatas = new ArrayList<AddressBookData>();
-	AtomicInteger id = new AtomicInteger(0);
+	@Autowired
+	AddressBookRepository addressBookRepository;
 	
 	@Override
 	public List<AddressBookData> getAddressBookData() {
 		log.debug("List of all address book data");
-		return addressDatas;
+		return addressBookRepository.findAll();
 	}
 
 	@Override
 	public AddressBookData getAddressBookDataById(int eid) {
 		log.debug("Get address book data by ID");
-		return addressDatas.stream().filter(addressData -> addressData.getAddressBookId() == eid)
-									.findFirst()
+		return addressBookRepository.findById(eid)
 									.orElseThrow(() -> new AddressBookException("Address Book with ID:" + eid + " Not Found!"));
 	}
 
 	@Override
 	public AddressBookData addAddressBook(AddressBookDTO dto) {
-		log.debug("Add entry");
+		log.debug("Add entry : " + dto.toString());
 		AddressBookData addressData = null;
-		addressData = new AddressBookData(id.incrementAndGet(), dto);
-		addressDatas.add(addressData);
-		return addressData;
+		addressData = new AddressBookData(dto);
+		return addressBookRepository.save(addressData);
 	}
 
 	@Override
 	public AddressBookData updateAddressBook(int addressId,AddressBookDTO dto) {
 		log.debug("Update address book data");
 		AddressBookData addressData = getAddressBookDataById(addressId);
-		addressData.setName(dto.getName());
-		addressData.setAddress(dto.getAddress());
-		addressDatas.set(addressId-1, addressData);
-		return addressData;
+		addressData.updateAddressBookData(dto);
+		return addressBookRepository.save(addressData);
 	}
 
 	@Override
 	public void deleteAddressBook(int id) {
-		log.debug("Delete address book data by id");
-		addressDatas.remove(id-1);
+		addressBookRepository.deleteById(id);
 	}
 
 }
