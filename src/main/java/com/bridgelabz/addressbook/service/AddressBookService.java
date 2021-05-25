@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.bridgelabz.addressbook.dto.AddressBookDTO;
+import com.bridgelabz.addressbook.exceptions.AddressBookException;
 import com.bridgelabz.addressbook.model.AddressBookData;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,9 @@ public class AddressBookService implements IAddressBookService {
 	@Override
 	public AddressBookData getAddressBookDataById(int eid) {
 		log.debug("Get address book data by ID");
-		return addressDatas.get(eid-1);
+		return addressDatas.stream().filter(addressData -> addressData.getAddressBookId() == eid)
+									.findFirst()
+									.orElseThrow(() -> new AddressBookException("Address Book with ID:" + eid + " Not Found!"));
 	}
 
 	@Override
